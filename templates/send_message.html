@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-center">Crea Messaggio per {{ recipient['name'] }}</h2>
+<div class="row mt-4">
+    <!-- Form -->
+    <form method="POST" action="{{ url_for('send_message', recipient_id=recipient['_id']) }}">
+        <div class="row">
+            <!-- Colonna 1: Prodotti offerti dal current_user -->
+            <div class="col-md-3 border-right">
+                <h4 class="text-center">I tuoi Prodotti</h4>
+                <ul class="list-group">
+                    {% for product in available_offered %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ product['name'] }}
+                        <button name="add_offered" value="{{ product['_id'] }}" class="btn btn-sm btn-primary">➤</button>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Colonna 2: Prodotti offerti dall'altro utente -->
+            <div class="col-md-3 border-right">
+                <h4 class="text-center">Prodotti di {{ recipient['name'] }}</h4>
+                <ul class="list-group">
+                    {% for product in available_wanted %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ product['name'] }}
+                        <button name="add_wanted" value="{{ product['_id'] }}" class="btn btn-sm btn-primary">➤</button>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Colonna 3: Contenitori dei prodotti selezionati -->
+            <div class="col-md-6">
+                <!-- Prodotti offerti dal current_user -->
+                <div class="border mb-4 p-3">
+                    <h5>Proponi:</h5>
+                    {% for product in selected_offered %}
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-1">
+                        <span>{{ product['name'] }}</span>
+                        <button name="remove_offered" value="{{ product['_id'] }}" class="btn btn-sm btn-danger">✗</button>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center">Nessun prodotto selezionato</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Prodotti richiesti dall'altro utente -->
+                <div class="border p-3">
+                    <h5>Per ricevere in cambio:</h5>
+                    {% for product in selected_wanted %}
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-1">
+                        <span>{{ product['name'] }}</span>
+                        <button name="remove_wanted" value="{{ product['_id'] }}" class="btn btn-sm btn-danger">✗</button>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center">Nessun prodotto selezionato</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Text box e Pulsanti -->
+                <div class="form-group mt-4">
+                    <label for="message">Messaggio</label>
+                    <textarea name="message" id="message" class="form-control" rows="4"
+                              placeholder="Scrivi il tuo messaggio"></textarea>
+                </div>
+                <div class="text-center mt-3">
+                    <button type="submit" name="send_message" class="btn btn-success">Invia</button>
+                    <a href="{{ url_for('user_page', user_id=recipient['_id']) }}" class="btn btn-secondary">Annulla</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-center">Aggiungi Prodotto</h2>
+
+<form action="{{ url_for('add_product') }}" method="POST" enctype="multipart/form-data" class="mt-4">
+    <!-- Campo Product Type -->
+    <div class="form-group">
+        <label for="product_type">Tipo di Prodotto</label>
+        <select id="product_type" name="product_type" class="form-control" required>
+            <option value="wanted">Prodotto Desiderato</option>
+            <option value="offered">Prodotto Offerto</option>
+        </select>
+    </div>
+
+    <!-- Campo Nome -->
+    <div class="form-group">
+        <label for="name">Nome Prodotto</label>
+        <input type="text" id="name" name="name" class="form-control" placeholder="Inserisci il nome del prodotto" required>
+    </div>
+
+    <!-- Campo Descrizione -->
+    <div class="form-group">
+        <label for="description">Descrizione</label>
+        <textarea id="description" name="description" class="form-control" rows="4" placeholder="Descrivi il prodotto" required></textarea>
+    </div>
+
+    <!-- Campo Categoria -->
+    <div class="form-group">
+        <label for="category">Categoria</label>
+        <input type="text" id="category" name="category" class="form-control" placeholder="Inserisci la categoria del prodotto" required>
+    </div>
+
+    <!-- Campo Immagine -->
+    <div class="form-group">
+        <label for="images">Immagini (puoi selezionare più file)</label>
+        <input type="file" id="images" name="images" class="form-control-file" accept="image/*" multiple>
+    </div>
+
+    <!-- Bottone Submit -->
+    <button type="submit" class="btn btn-primary btn-block">Aggiungi Prodotto</button>
+</form>
+{% endblock %}
