@@ -31,26 +31,20 @@ La logica di funzionamento è la seguente:
 
 Work In Progress
 
-al momento si può lanciare il file app.py in locale
-i requirement sono flask flask_login pymongo bson werkzeug base64 datetime
-
-è necessario creare un db su mongo denominato barattApp_DB che contenga 3 collection:
+si può lanciare il file app.py in locale ma è necessario creare un db su mongo denominato barattApp_DB che contenga 3 collection:
 - Users
 - Products
 - Messages
 è poi necessario sostituire nel file app.py username e password per la connessione al DB
 
 Sviluppi successivi:
-- al momento i messaggi inviati tra un utente e l'altro sono salvati a DB ma non vengono visualizzati
-- penso sia necessario creare chat.html
-- sarebbe carino potervi accedere con un bottone su cui eventuialmente compare la notifica
+- si potrebbe implementare un sistema di notifica per i nuovi messaggi non letti
 - creare una sezione cerca sia per utenti che per prodotti
 - fare migliorie varie ed eventuali alla grafica
 - nella pagina profilo aggiungere foto, domicilio, descriviti, altre info e uno storico degli scambi... anche un sistema di rewarding
+- al momento il deploy è fatto su render ma solo perchè è gratis
 
-- deployare e rendere pubblica la app
-- gli scambi sono fortemente consigliati di persona, ma si può immaginare una specie di spedizione incorciata o una hub intermedio in cui
-    entrambi gli agenti dello scambio inviano i loro prodotti
+- gli scambi sono fortemente consigliati di persona, ma si può immaginare una specie di spedizione incorciata o una hub intermedio in cui entrambi gli agenti dello scambio inviano i loro prodotti
 - valutare di sostituire mongo con altro DB (azure potrebbe avere senso se poi lo uso anche per il deploy)
 - oppure provare ad appoggiarsi per deploy e db su AWS o Google
 - refactoring dell'intera app con javascript ... (non so se lo farò mai)
