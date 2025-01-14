@@ -12,7 +12,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 
 # Configurazione MongoDB
-#client = MongoClient("mongodb+srv://ziganteros:OVwjboIZ4VNzsjOi@cluster0.hr5ue.mongodb.net/")
 client = MongoClient(f"mongodb+srv://{dbUser}:{dbPass}@cluster0.hr5ue.mongodb.net/")
 db = client.barattApp_DB
 #default_user = ObjectId("67586e6e9056b15e364df4e9") # philip pino
