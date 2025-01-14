@@ -1,0 +1,7 @@
+flask
+flask_login
+pymongo
+bson.objectid
+werkzeug.security
+base64
+datetime
