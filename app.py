@@ -5,14 +5,14 @@ from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 import base64
 from datetime import datetime
-
+from config import dbUser, dbPass
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 
 # Configurazione MongoDB
-client = MongoClient("mongodb+srv://username:password@cluster0.hr5ue.mongodb.net/")
+client = MongoClient(f"mongodb+srv://{dbUser}:{dbPass}@cluster0.hr5ue.mongodb.net/")
 db = client.barattApp_DB
 #default_user = ObjectId("67586e6e9056b15e364df4e9") # philip pino
 #default_user = ObjectId("67586f029056b15e364df4f8") # lallero lara
@@ -254,15 +254,26 @@ def send_message(recipient_id):
         elif 'send_message' in request.form:
             message_text = request.form['message']
             message = {
-                "sender_id": current_user.id,
-                "recipient_id": ObjectId(recipient_id),
+                "timestamp": datetime.now(),
+                "name": current_user.id,
                 "offered_products": [ObjectId(pid) for pid in session['selected_offered']],
                 "wanted_products": [ObjectId(pid) for pid in session['selected_wanted']],
-                "message": message_text,
-                "timestamp": datetime.now()
+                "text": message_text
             }
-            print(message)
-            db.Messages.insert_one(message)
+            chat = db.Messages.find(
+                {"$or": [{"peopleA": current_user.id}, {"peopleB": current_user.id}],
+                "$or": [{"peopleA": ObjectId(recipient_id)}, {"peopleB": ObjectId(recipient_id)}]})
+            if len([m['messages'] for m in chat]) > 0: 
+                db.Messages.update_one(
+                    {"peopleA": {"$in": [current_user.id, ObjectId(recipient_id)]}, 
+                    "peopleB": {"$in": [current_user.id, ObjectId(recipient_id)]}},
+                    {"$push": {"messages": message}})
+            else: 
+                db.Messages.insert_one(
+                    {"peopleA":  current_user.id, 
+                    "peopleB": ObjectId(recipient_id), 
+                    "messages": [message]})
+                print("nuova chat inserita")
             session.pop('selected_offered', None)
             session.pop('selected_wanted', None)
             flash('Messaggio inviato con successo!', 'success')
@@ -283,6 +294,61 @@ def send_message(recipient_id):
                            available_wanted=available_wanted,
                            selected_offered=selected_offered,
                            selected_wanted=selected_wanted)
+
+@app.route('/chat')
+def chat():
+    # Recupera i messaggi dall'utente autenticato
+    document = db.Messages.find({"$or": [{"peopleA": current_user.id}, {"peopleB": current_user.id}]})
+    chat = [c for c in document]
+    # ordinamento delle chat dalla più recente
+    def max_timestamp(c): return max([t['timestamp'] for t in c['messages']]) 
+    chat_sorted = sorted([c for c in chat], key=lambda x: max_timestamp(x), reverse = True)
+    # associo i nomi agli id degli user
+    id_name_dict = {}
+    for c in chat:
+        peopleA = db.Users.find_one({"_id": c['peopleA']})
+        peopleB = db.Users.find_one({"_id": c['peopleB']})
+        id_name_dict[c['peopleA']], id_name_dict[c['peopleB']] = peopleA['name'], peopleB['name']
+    # associo i nomi agli id dei prodotti
+    id_product_dict = {}
+    for c in chat:
+        for m in c['messages']:
+            if 'offered_products' in m.keys():
+                for p in m['offered_products']:
+                    product = db.Products.find_one({"_id": p})
+                    id_product_dict[p] = product['name']
+            if 'wanted_products' in m.keys():
+                for p in m['wanted_products']:
+                    product = db.Products.find_one({"_id": p})
+                    id_product_dict[p] = product['name']
+    print(id_name_dict)
+    print(id_product_dict)
+    
+    return render_template('chat.html',         
+        chat=chat_sorted, 
+        id_name_dict=id_name_dict, 
+        id_product_dict=id_product_dict,
+        current_user=current_user.id)
+
+
+@app.route('/send_reply/<recipient_id>', methods=['POST'])
+def send_reply(recipient_id):
+    reply_text = request.form['message']
+
+    # Qui salvare il messaggio nel database (o lista di messaggi)
+    new_reply = {
+        'name': current_user.id,
+        'text': reply_text,
+        'timestamp': datetime.now()
+    }
+
+    db.Messages.update_one(
+                    {"peopleA": {"$in": [current_user.id, ObjectId(recipient_id)]}, 
+                    "peopleB": {"$in": [current_user.id, ObjectId(recipient_id)]}},
+                    {"$push": {"messages": new_reply}})
+
+    # Dopo che il messaggio è stato inviato, redirigi all'area chat
+    return redirect(url_for('chat'))
 
 
 if __name__ == '__main__':

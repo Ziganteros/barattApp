@@ -1,7 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2 class="text-center">Benvenuto, {{ user.name }}</h2>
+<div>
+    <h2 class="text-left">Benvenuto, {{ user.name }}</h2>
+    <!-- Pulsante per leggere le chat -->
+    <a href="{{ url_for('chat') }}" class="btn btn-primary">Chat</a>
+    <!-- Pulsante per gestire i prodotti offerti e desiderati -->
+    <a href="{{ url_for('manage_products') }}" class="btn btn-primary">Gestisci Prodotti</a>
+</div>
 <div class="row mt-4">
     <!-- Colonna Prodotti Offerti -->
     <div class="col-md-6">
@@ -14,10 +20,6 @@
             </li>
             {% endfor %}
         </ul>
-        <!-- Pulsante per gestire i prodotti offerti -->
-        <div class="mt-3">
-            <a href="{{ url_for('manage_products') }}" class="btn btn-primary">Gestisci Prodotti</a>
-        </div>
     </div>
     <!-- Colonna Prodotti Desiderati -->
     <div class="col-md-6">

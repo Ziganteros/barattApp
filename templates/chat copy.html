@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-center">Centro Messaggi</h2>
+
+<div class="chat-container">
+    {% for counterpart in chat %}
+        <details>
+            <summary>
+                Chat con {{ id_name_dict[counterpart.peopleA] if counterpart.peopleA != current_user else id_name_dict[counterpart.peopleB] }}
+            </summary>
+            <div class="messages">
+                {% for message in counterpart.messages %}
+                    <div class="message">
+                        <p>
+                            <strong>{{ id_name_dict[message['name']] }}:</strong> 
+                            {{ message['text'] }} 
+                            <span class="timestamp">({{ message['timestamp'] }})</span>
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Form per aggiungere un nuovo messaggio -->
+            <form method="POST" action="{{ url_for('send_reply', recipient_id=counterpart.peopleA if counterpart.peopleA != current_user else counterpart.peopleB) }}">
+                <div class="form-group">
+                    <textarea name="message" class="form-control" rows="3" placeholder="Scrivi un messaggio..." required></textarea>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Invia</button>
+                </div>
+            </form>
+        </details>
+    {% endfor %}
+</div>
+
+<style>
+    .chat-container {
+        margin: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: #f8f9fa;
+    }
+    details {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 10px;
+        background-color: #ffffff;
+        transition: background-color 0.3s ease;
+    }
+    details[open] {
+        background-color: #f1f1f1;
+    }
+    summary {
+        cursor: pointer;
+        font-weight: bold;
+        color: #333;
+    }
+    .messages {
+        padding-left: 20px;
+        padding-top: 5px;
+    }
+    .message {
+        margin-bottom: 10px;
+        padding: 5px;
+        border-radius: 5px;
+        background-color: #f1f1f1;
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        word-wrap: break-word;
+    }
+    .timestamp {
+        font-size: 0.75em;
+        color: #777;
+        margin-left: 10px;
+        font-style: italic;
+    }
+    .form-group {
+        margin-top: 10px;
+    }
+    textarea {
+        resize: none;
+    }
+</style>
+
+{% endblock %}
