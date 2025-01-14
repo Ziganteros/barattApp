@@ -3,5 +3,3 @@ flask_login
 pymongo
 bson
 werkzeug
-base64
-datetime
