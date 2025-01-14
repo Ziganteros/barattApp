@@ -5,11 +5,13 @@ from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 import base64
 from datetime import datetime
-from config import dbUser, dbPass
+#from config import dbUser, dbPass
+import os
 
+dbUser = os.getenv("DB_USER")
+dbPass = os.getenv("DB_PASS")
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key'
 
 # Configurazione MongoDB
 client = MongoClient(f"mongodb+srv://{dbUser}:{dbPass}@cluster0.hr5ue.mongodb.net/")
