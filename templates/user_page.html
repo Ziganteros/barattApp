@@ -2,7 +2,6 @@
 
 {% block content %}
 <h2 class="text-center">{{ user.name }}</h2>
-<p class="text-center">Email: {{ user.email }}</p>
 <div class="row mt-4">
     <!-- Colonna Prodotti Offerti -->
     <div class="col-md-6">
@@ -32,7 +31,7 @@
 {% if current_user.id != user['_id'] %}
 <div class="text-center mt-3">
     <a href="{{ url_for('send_message', recipient_id=user['_id']) }}" class="btn btn-primary">
-        Send Message
+        Proponi Baratto
     </a>
 </div>
 {% endif %}
