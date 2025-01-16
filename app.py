@@ -8,10 +8,11 @@ from datetime import datetime
 #from config import dbUser, dbPass
 import os
 
+app = Flask(__name__)
+
+app.secret_key = os.getenv('SECRET_KEY')
 dbUser = os.getenv("DB_USER")
 dbPass = os.getenv("DB_PASS")
-
-app = Flask(__name__)
 
 # Configurazione MongoDB
 client = MongoClient(f"mongodb+srv://{dbUser}:{dbPass}@cluster0.hr5ue.mongodb.net/")
